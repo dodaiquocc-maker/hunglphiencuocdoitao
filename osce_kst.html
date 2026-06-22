@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>OSCE KST</title>
+<style>
+    body{
+        background: #f8f9fa;
+        color: #1f2937;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 15px;
+        touch-action: manipulation;
+    }
+    h1{
+        text-align: center;
+        color: #166534;
+        margin: 10px 0 20px 0;
+    }
+    .menu, .trainer{
+        max-width: 900px;
+        margin: auto;
+    }
+    .card{
+        background: white;
+        padding: 20px;
+        margin: 12px 0;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        font-size: 1.4rem;
+        cursor: pointer;
+    }
+    .card:hover{
+        background: #f0fdf4;
+        transform: translateY(-3px);
+    }
+
+    /* Trainer screen */
+    #station{
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        color: #4b5563;
+    }
+    #timer{
+        font-size: 4.8rem;
+        font-weight: bold;
+        margin: 15px 0;
+        min-height: 90px;
+    }
+    img{
+        max-width: 100%;
+        max-height: 52vh;
+        border-radius: 12px;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        margin: 15px 0;
+    }
+    .zoomed{
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 98vw !important;
+        max-height: 98vh !important;
+        z-index: 9999;
+        box-shadow: 0 0 50px rgba(0,0,0,0.6);
+    }
+    #answer{
+        margin: 25px 0;
+        font-size: 2.2rem;
+        color: #166534;
+        font-weight: bold;
+        display: none;
+        padding: 15px;
+        background: #f0fdf4;
+        border-radius: 12px;
+        min-height: 80px;
+    }
+    .buttons{
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+    }
+    button{
+        padding: 18px 30px;
+        font-size: 1.3rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: bold;
+        min-width: 160px;
+    }
+    .btn-answer{ background: #eab308; color: black; }
+    .btn-next{ background: #166534; color: white; }
+    .btn-back{ background: #64748b; color: white; margin-top: 15px; }
+</style>
+</head>
+<body>
+
+<div id="menu-screen" class="menu">
+    <h1>🧪 OSCE KST</h1>
+    <h2 style="text-align:center; color:#4b5563;">Chọn bài luyện</h2>
+    
+    <div class="card" onclick="startTopic(0)">Vi nấm</div>
+    <div class="card" onclick="startTopic(1)">🪳 Chí - Rận - Rệp - Bọ chét</div>
+    <div class="card" onclick="startTopic(2)">🕷️ Ve cứng & Ve mềm</div>
+    <div class="card" onclick="startTopic(3)">🪱 Sán & Trứng ký sinh trùng</div>
+    <div class="card" onclick="startTopic(4)">Tất cả câu hỏi (Random)</div>
+</div>
+
+<!-- Trainer Screen -->
+<div id="trainer-screen" class="trainer" style="display:none;">
+    <button class="btn-back" onclick="backToMenu()">← Quay về Menu</button>
+    <h1>🧪 OSCE KST</h1>
+    
+    <div id="station"></div>
+    <div id="timer">30</div>
+    <img id="image" alt="Hình ảnh">
+    <div id="answer"></div>
+
+    <div class="buttons">
+        <button class="btn-answer" onclick="showAnswer()">📍 HIỆN ĐÁP ÁN</button>
+        <button class="btn-next" onclick="nextStation()">➡️ CÂU TIẾP</button>
+    </div>
+</div>
+
+<script>
+// ====================== DỮ LIỆU THEO BÀI ======================
+const topics = [
+    { name: "Vi nấm", 
+      questions: [
+        {image:"3_1.jpg", answer:"Candida sp."},
+        {image:"3_2.jpg", answer:"Histoplasma capsulatum"},
+        {image:"3_3.jpg", answer:"Aspergillus fumigatus"},
+        {image:"3_4.jpg", answer:"Penicillium sp."},
+        {image:"3_5.jpg", answer:"Alternaria sp."},
+        {image:"3_6.jpg", answer:"Fusarium sp."},
+        {image:"3_7.jpg", answer:"Fusarium sp."},
+        {image:"3_8.jpg", answer:"Mucor sp"}
+      ]
+    },
+    { name: "Chí - Rận - Rệp - Bọ chét", 
+      questions: [
+        {image:"3_9.jpg", answer:"CTT cái Chí "},
+        {image:"3_10.jpg", answer:"CTT đực Chí"},
+        {image:"3_12.jpg", answer:"CTT đực Rệp"},
+        {image:"3_13.jpg", answer:"CTT cái Rệp"},
+        {image:"3_14.jpg", answer:"CTT Rận"},
+        {image:"3_15.jpg", answer:"CTT đực Bọ chét chó, mèo"},
+        {image:"3_16.jpg", answer:"CTT cái Bọ chét chuột"},
+        {image:"3_28.jpg", answer:"CTT cái Bọ chét chó, mèo"}
+      ]
+    },
+    { name: "Ve cứng & Ve mềm", 
+      questions: [
+        {image:"3_19.jpg", answer:"CTT đực Ve cứng"},
+        {image:"3_20.jpg", answer:"CTT cái Ve cứng"}
+      ]
+    },
+    { name: "Sán & Trứng ký sinh trùng", 
+      questions: [
+        {image:"1_021.jpg", answer:"Trứng sán dải cá"}
+      ]
+    },
+    { name: "Tất cả", questions: [] } // sẽ gộp tất cả
+];
+
+// Biến toàn cục
+let currentQuestions = [];
+let current = 0;
+let timeLeft = 30;
+let timerInterval;
+let showingAnswer = false;
+
+const menuScreen = document.getElementById("menu-screen");
+const trainerScreen = document.getElementById("trainer-screen");
+const stationEl = document.getElementById("station");
+const timerEl = document.getElementById("timer");
+const img = document.getElementById("image");
+const answerEl = document.getElementById("answer");
+
+// ====================== HÀM CHÍNH ======================
+function startTopic(topicIndex) {
+    if (topicIndex === 4) {
+        // Tất cả câu hỏi
+        currentQuestions = topics.flatMap(t => t.questions);
+    } else {
+        currentQuestions = topics[topicIndex].questions;
+    }
+
+    if (currentQuestions.length === 0) {
+        alert("Chưa có câu hỏi trong bài này!");
+        return;
+    }
+
+    // Shuffle
+    currentQuestions = [...currentQuestions].sort(() => Math.random() - 0.5);
+    current = 0;
+
+    menuScreen.style.display = "none";
+    trainerScreen.style.display = "block";
+
+    loadStation();
+}
+
+function loadStation() {
+    if (current >= currentQuestions.length) {
+        alert("✅ Hoàn thành bài! Quay về menu.");
+        backToMenu();
+        return;
+    }
+
+    stationEl.innerText = `Câu ${current+1}/${currentQuestions.length}`;
+    img.src = currentQuestions[current].image;
+    answerEl.innerText = currentQuestions[current].answer;
+    answerEl.style.display = "none";
+    
+    timeLeft = 30;
+    timerEl.innerText = "30";
+    timerEl.style.color = "#1f2937";
+    showingAnswer = false;
+    
+    startTimer();
+}
+
+function startTimer() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        if (showingAnswer) return;
+        timeLeft--;
+        timerEl.innerText = timeLeft;
+        if (timeLeft <= 10) timerEl.style.color = "#b45309";
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            timerEl.innerText = "HẾT GIỜ";
+        }
+    }, 1000);
+}
+
+function showAnswer() {
+    if (showingAnswer) return;
+    showingAnswer = true;
+    answerEl.style.display = "block";
+    clearInterval(timerInterval);
+}
+
+function nextStation() {
+    current++;
+    loadStation();
+}
+
+function backToMenu() {
+    if (timerInterval) clearInterval(timerInterval);
+    trainerScreen.style.display = "none";
+    menuScreen.style.display = "block";
+}
+
+// Space cho máy tính
+document.addEventListener("keydown", (e) => {
+    if (e.code !== "Space") return;
+    e.preventDefault();
+    if (!showingAnswer) showAnswer();
+    else nextStation();
+});
+
+// Zoom ảnh
+img.addEventListener("click", () => {
+    img.classList.toggle("zoomed");
+});
+</script>
+</body>
+</html>
