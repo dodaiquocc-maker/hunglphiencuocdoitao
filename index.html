@@ -106,9 +106,10 @@
     
     <div class="card" onclick="startTopic(0)">Vi nấm</div>
     <div class="card" onclick="startTopic(1)">Đơn bào</div>
-    <div class="card" onclick="startTopic(2)">🕷️ Ve cứng & Ve mềm</div>
-    <div class="card" onclick="startTopic(3)">🪱 Sán & Trứng ký sinh trùng</div>
-    <div class="card" onclick="startTopic(4)">Tất cả câu hỏi (Random)</div>
+    <div class="card" onclick="startTopic(2)">Giun</div>
+    <div class="card" onclick="startTopic(3)">Sán</div>
+    <div class="card" onclick="startTopic(4)">Động vật chân khớp</div>
+    <div class="card" onclick="startTopic(5)">Tất cả câu hỏi (Random)</div>
 </div>
 
 <!-- Trainer Screen -->
@@ -157,17 +158,33 @@ const topics = [
 	{image:"3_19.jpg", answer:"Entamoeba coli cyst"}
       ]
     },
-    { name: "Ve cứng & Ve mềm", 
+    { name: "Giun", 
       questions: [
-        {image:"3_19.jpg", answer:"CTT đực Ve cứng"},
-        {image:"3_20.jpg", answer:"CTT cái Ve cứng"}
+        {image:"3_20.jpg", answer:"Trichuris Trichiura ova - Trứng giun tóc"},
+        {image:"3_21.jpg", answer:"Ascaris lumbricoides ova - Trứng giun đũa"},
+        {image:"3_22.jpg", answer:"Trứng giun móc"},
+        {image:"3_23.jpg", answer:"Strongyloides stercoralis larva 1 - Ấu trùng giun lươn gđ 1"},
+        {image:"3_24.jpg", answer:"Necator americanus adult - Giun móc trưởng thành"},
+	{image:"3_25.jpg", answer:"Enterobius vermicularis adult - Giun kim trưởng thành"}
       ]
     },
-    { name: "Sán & Trứng ký sinh trùng", 
+    { name: "Sán", 
       questions: [
-        {image:"1_021.jpg", answer:"Trứng sán dải cá"}
+        {image:"3_26.jpg", answer:"Trứng sán dải - Taenia sp ova "},
+        {image:"3_27.jpg", answer:"Fasciolopsis buski ova - Trứng sán lá ruột "},
+        {image:"3_28.jpg", answer:"Clonorchis sinensis ova - Trứng sán lá nhỏ ở gan "},
+        {image:"3_29.jpg", answer:"Fasciola gigantica adult - Sán lá lớn ở gan "}
       ]
     },
+    { name: "Động vật chân khớp",
+      questions: [
+	{image:"3_30.jpg", answer:"Culex sp larva - Muỗi culex"},
+	{image:"3_31.jpg", answer:"Ctenocephalides canis adult - Bọ chét"},
+	{image:"3_32.jpg", answer:"Xenopsylla cheopis adult - Bọ chét"},
+	{image:"3_33.jpg", answer:"Rhipicephalus sanguineus adult - Ve chó"},
+	{image:"3_34.jpg", answer:"Pediculus capitis adult - Chí"},
+	{image:"3_35.jpg", answer:"Phthirius inguinalis adult - Rận"}] },
+
     { name: "Tất cả", questions: [] } // sẽ gộp tất cả
 ];
 
@@ -187,7 +204,7 @@ const answerEl = document.getElementById("answer");
 
 // ====================== HÀM CHÍNH ======================
 function startTopic(topicIndex) {
-    if (topicIndex === 4) {
+    if (topicIndex === 5) {
         // Tất cả câu hỏi
         currentQuestions = topics.flatMap(t => t.questions);
     } else {
